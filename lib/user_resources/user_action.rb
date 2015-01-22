@@ -108,10 +108,10 @@ class UserResources::UserAction
   def attribute_changed?(attrs, attribute, to = nil)
     # ActiveRecord#attributes has strings as hash keys.
     before = @original_attrs[attribute]
-    after = attrs[attribute]
-    
-    if attrs.key?(attribute) && before != after
-      to ? after == to : true    
+    after = attrs[attribute] || attrs[attribute.to_sym]
+
+    if (attrs.key?(attribute) || attrs.key?(attribute.to_sym)) && before != after
+      to ? after == to : true
     else
       false
     end
