@@ -4,8 +4,6 @@ require_relative 'controller_exception_handling'
 # * current_user - returning the user that is logged in and performs the current action.
 module UserResources::Controller::Actions
 
-  PermitParams = []
-  
   private
 
   # The following 3 methods are the methods that can be *potentially* exposed as public, 
@@ -35,12 +33,8 @@ module UserResources::Controller::Actions
 
   private
 
-  def resource_params(source = nil)
-    if source
-      source.permit(*PermitParams)
-    else
-      params.require(user_resource_class.to_s.underscore).permit(*PermitParams)
-    end
+  def resource_params(options = {})
+    action_class.params(params, options)
   end
 
   def model_class

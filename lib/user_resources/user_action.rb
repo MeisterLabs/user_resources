@@ -1,5 +1,7 @@
 class UserResources::UserAction
 
+  PermitParams = []
+
   def initialize(resource, user)
     @resource, @user = resource, user
   end
@@ -70,13 +72,22 @@ class UserResources::UserAction
     @resource
   end
 
+  def self.params(source, options = {})
+    raise ArgumentError.new('source required') unless source
+    resource_name = options[:resource] || model_class.to_s.underscore
+
+    source.require(resource_name).permit(*self::PermitParams)
+  end
+
+  def self.model_class
+    self.to_s.gsub(/Action\z/, '').constantize
+  end
 
   protected
 
   def allowed?
     raise NotImplementedError
   end
-
 
   def before_create(attrs)
   end
@@ -101,7 +112,6 @@ class UserResources::UserAction
   
   def after_destroy
   end
-  
   
   # Helper method to see if an attribute has been changed by this action. By passing `to` one can
   # also check if that attribute changed to a specific value.
