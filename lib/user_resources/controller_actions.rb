@@ -4,6 +4,7 @@ require_relative 'controller_exception_handling'
 # * current_user - returning the user that is logged in and performs the current action.
 module UserResources::Controller::Actions
 
+  PermitParams = []
   
   private
 
@@ -14,14 +15,14 @@ module UserResources::Controller::Actions
     model = model_class.new
     action = action_class.new(model, current_user)
 
-    respond_with(action.create(resource_attributes))
+    respond_with(action.create(params))
   end
 
   def update
     model = model_class.find(params[:id])
     action = action_class.new(model, current_user)
 
-    respond_with(action.update(resource_attributes))
+    respond_with(action.update(params))
   end
 
   def destroy
@@ -34,11 +35,12 @@ module UserResources::Controller::Actions
 
   private
 
-  # HTML forms by default (at least in rails) name resources attributes like `address[street]`.
-  # JSON APIs and API endpoints usually send a json body with the serialized resource. Rails
-  # decodes this directly in `params`.
-  def resource_attributes
-    request.format.html? ? params[user_resource_class.to_s.downcase] : params
+  def params(source = nil)
+    if source
+      source.permit(*PermitParams)
+    else
+      params.require(user_resource_class.to_s.underscore).permit(*PermitParams)
+    end
   end
 
   def model_class
