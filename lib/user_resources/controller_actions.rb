@@ -35,7 +35,7 @@ module UserResources::Controller::Actions
 
   private
 
-  def params(source = nil)
+  def resource_params(source = nil)
     if source
       source.permit(*PermitParams)
     else
