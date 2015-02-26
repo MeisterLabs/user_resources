@@ -15,14 +15,14 @@ module UserResources::Controller::Actions
     model = model_class.new
     action = action_class.new(model, current_user)
 
-    respond_with(action.create(params))
+    respond_with(action.create(resource_params))
   end
 
   def update
     model = model_class.find(params[:id])
     action = action_class.new(model, current_user)
 
-    respond_with(action.update(params))
+    respond_with(action.update(resource_params))
   end
 
   def destroy
